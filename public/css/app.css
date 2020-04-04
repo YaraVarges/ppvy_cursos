@@ -10886,3 +10886,7 @@ a.text-dark:focus {
   margin-top: 30px;
 }
 
+.header-content {
+  min-height: calc(100vh - 56px);
+}
+

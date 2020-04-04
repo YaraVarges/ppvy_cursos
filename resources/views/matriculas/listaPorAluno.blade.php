@@ -1,13 +1,23 @@
 @extends('layouts.layout')
-@section('title', 'Edição de curso')
+@section('title', 'Listagem de matrículas')
 
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('warning'))
+        <div class="alert alert-warning">
+            {{ session('warning') }}
+        </div>
+    @endif
+
     <div class="row mt-3 mb-3">
         <div class="col">
             <a href="" class="btn btn-info">Realizar matrícula</a>
         </div>
     </div>
-
 
     <form method="GET">
         <div class="row mt-3 mb-3 align-items-center">
@@ -67,7 +77,14 @@
                     </td>
                     <td>{{ $matricula->matricula_status }}</td>
                     <td>{{ $matricula->data_matricula }}</td>
-                    <td><a href="" class="btn btn-danger">Cancelar matrícula</a></td>
+                    <td>
+                        @if($matricula->matricula_status != 'Cancelada')
+                            <a href="{{ route('matriculas_cancelar', ['id' => $matricula->id]) }}" class="btn btn-danger">Cancelar matrícula</a>
+                        @else
+                            <a href="{{ route('matriculas_reativar', ['id' => $matricula->id]) }}" class="btn btn-success">Reativar matrícula</a>
+                        @endif
+
+                    </td>
                 </tr>
             @endforeach
         </tbody>

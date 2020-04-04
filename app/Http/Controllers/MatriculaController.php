@@ -98,19 +98,17 @@ class MatriculaController extends Controller
                     ]
                 );
 
-                return redirect()->route('matriculas_listaPorAluno')->with('success', 'Matricula realizada com sucesso');
+                return redirect()->route('matriculas_lista_por_aluno')->with('success', 'Matricula realizada com sucesso');
             } else {
-                return redirect()->route('matriculas_listaPorAluno')->with('warning', 'Você já possui uma matrícula em andamento para esse curso');
+                return redirect()->route('matriculas_realizar_matricula')->with('warning', 'Você já possui uma matrícula em andamento para esse curso');
             }
         }
 
-        return redirect()->route('matriculas_listaPorAluno');
+        return redirect()->route('matriculas_lista_por_aluno');
     }
 
-    public function cancelarMatricula(Request $request)
+    public function cancelarMatricula(Request $request, $id)
     {
-        $id = $request->get('id');
-
         $existe = DB::select('SELECT * FROM matricula WHERE id = :id AND aluno_id = :aluno_id',
             [
                 'id' => $id,
@@ -121,9 +119,34 @@ class MatriculaController extends Controller
         if ($existe) {
             DB::update("UPDATE matricula SET status = 'Cancelada' WHERE id = :id", ['id' => $id]);
 
-            return redirect()->route('matriculas_listaPorAluno')->with('success', 'Matricula cancelada com sucesso');
+            return redirect()->route('matriculas_lista_por_aluno')->with('success', 'Matrícula cancelada com sucesso');
         }
 
-        return redirect()->route('matriculas_listaPorAluno');
+        return redirect()->route('matriculas_lista_por_aluno');
+    }
+
+    public function realizarMatricula()
+    {
+        $cursos = DB::select('SELECT * FROM curso WHERE disponivel = 1');
+
+        return view('matriculas.realizar-matricula', ['cursos' => $cursos]);
+    }
+
+    public function reativarMatricula(Request $request, $id)
+    {
+        $existe = DB::select("SELECT * FROM matricula WHERE id = :id AND aluno_id = :aluno_id AND status = 'Cancelada'",
+            [
+                'id' => $id,
+                'aluno_id' => 1, //verificação para caso alterem o ID da URL, para não reativar uma matrícula de outro aluno
+            ]
+        );
+
+        if ($existe) {
+            DB::update("UPDATE matricula SET status = 'Em andamento' WHERE id = :id", ['id' => $id]);
+
+            return redirect()->route('matriculas_lista_por_aluno')->with('success', 'Matrícula reativada com sucesso');
+        }
+
+        return redirect()->route('matriculas_lista_por_aluno');
     }
 }

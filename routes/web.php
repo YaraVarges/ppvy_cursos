@@ -29,10 +29,7 @@ Route::prefix('/cursos')->group(function() {
 Route::prefix('/matriculas')->group(function() {
     Route::get('/aluno', 'MatriculaController@listaPorAluno')->name('matriculas_lista_por_aluno');
     Route::post('/matricular', 'MatriculaController@matricular')->name('matriculas_matricular');
-    Route::get('/cancelar/{id}', 'MatriculaController@cancelar')->name('matriculas_cancelar');
+    Route::get('/cancelar/{id}', 'MatriculaController@cancelarMatricula')->name('matriculas_cancelar');
     Route::get('/realizar-matricula', 'MatriculaController@realizarMatricula')->name('matriculas_realizar_matricula');
+    Route::get('/reativar-matricula/{id}', 'MatriculaController@reativarMatricula')->name('matriculas_reativar');
 });
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
